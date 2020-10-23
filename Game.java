@@ -1,15 +1,21 @@
 import java.awt.Canvas;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.image.BufferStrategy;
+import java.awt.image.BufferedImage;
 
 import javax.swing.JFrame;
 
+
 public class Game extends Canvas implements Runnable{
-    public static boolean isRunning = false;
-    public Thread thread;
-    public JFrame jFrame;
-    public static final int WIDTH = 160;
-    public static final int HEIGHT = 120;
-    public static final int SCALE = 4;
+    private static boolean isRunning = false;
+    private Thread thread;
+    private JFrame jFrame;
+    private static final int WIDTH = 160;
+    private static final int HEIGHT = 120;
+    private static final int SCALE = 4;
+    private BufferedImage image;
 
     public Game(){
         this.setPreferredSize(new Dimension(WIDTH*SCALE,HEIGHT*SCALE));
@@ -18,6 +24,7 @@ public class Game extends Canvas implements Runnable{
         jFrame.setDefaultCloseOperation(jFrame.EXIT_ON_CLOSE);
         jFrame.pack();
         jFrame.setVisible(true);
+        image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
     }
     public static void main(String[] args) {
         Game game = new Game();
@@ -36,6 +43,17 @@ public class Game extends Canvas implements Runnable{
 
     private void render() {
         //System.out.println("Render");
+        BufferStrategy bs = this.getBufferStrategy();
+        if (bs == null){
+            this.createBufferStrategy(3);
+            return;
+        }
+        Graphics g = image.getGraphics();
+        g.setColor(new Color(20,20,20));
+        g.fillRect(0,0,WIDTH, HEIGHT);
+        g= bs.getDrawGraphics();
+        g.drawImage(image,0,0, WIDTH*SCALE,HEIGHT*SCALE,null);
+        bs.show();
     }
     @Override
     public void run() {
